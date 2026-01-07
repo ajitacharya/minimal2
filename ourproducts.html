@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Minimal Shop | Our Products</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap');
+    :root {
+      --color-primary-dark: #1c1917;
+      --color-secondary-light: #f5f5f4;
+      --color-accent-gold: #ca8a04;
+      --max-width: 1280px;
+    }
+    .dropdown > a::after { content: " ▼"; font-size: 0.7rem; }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html { font-family:'Inter',sans-serif; scroll-behavior: smooth; }
+    body { background: linear-gradient(135deg,#f9fafb 0%,#e5e7eb 100%); color:var(--color-primary-dark); line-height:1.6; animation:fadeIn 1s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1rem; }
+    a { text-decoration:none; color:inherit; transition: color 0.3s ease, transform 0.3s ease; }
+
+    /* Header & Navigation */
+    .header { position:sticky; top:0; z-index:50; background-color: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.06); }
+    .nav-content { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; }
+    .logo { font-size:1.875rem; font-weight:900; letter-spacing:-0.025em; color:var(--color-primary-dark); transition: color 0.3s ease; }
+    .logo:hover { color:var(--color-accent-gold); transform:scale(1.05); }
+    .nav-links { display:flex; gap:0.5rem; position:relative; align-items:center; }
+    .nav-links a { font-size:1.125rem; font-weight:500; padding:0.5rem 0.75rem; border-radius:0.5rem; display:block; transition: all 0.3s ease; }
+    .nav-links .active-link { color:var(--color-accent-gold); background-color:var(--color-secondary-light); pointer-events:none; }
+    .nav-links a:not(.active-link):hover { color:var(--color-accent-gold); background-color:var(--color-secondary-light); transform:translateY(-2px); }
+    .nav-links .logout:hover { color:#dc2626; }
+    .dropdown { position:relative; }
+    .dropdown-content { display:none; position:absolute; top:100%; left:0; background:white; min-width:200px; box-shadow:0 8px 16px rgba(0,0,0,0.1); border-radius:0.5rem; z-index:100; padding:0.5rem 0; }
+    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown-content a { padding:0.75rem 1rem; display:block; font-weight:500; color:var(--color-primary-dark); }
+    .dropdown-content a:hover { background-color:var(--color-secondary-light); color:var(--color-accent-gold); }
+
+    /* Cart badge */
+    .cart-badge {
+      position: relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:40px;
+    }
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: red;
+      color:white;
+      font-size:12px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-weight:700;
+      line-height:1;
+    }
+
+    /* Products Section */
+    .products-section { padding:4rem 0 6rem; }
+    .section-title { font-size:2.5rem; font-weight:700; text-align:center; margin-bottom:3rem; background: linear-gradient(45deg,var(--color-primary-dark),var(--color-accent-gold));
+       -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .category-title { font-size:2rem; font-weight:600; text-align:center; margin:5rem 0 2rem; background: linear-gradient(45deg,var(--color-accent-gold),var(--color-primary-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; padding:0.5rem; border-bottom:2px solid var(--color-accent-gold); animation:slideIn 0.8s ease-out; }
+    @keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+    .product-grid { display:grid; gap:2rem; grid-template-columns:1fr; }
+    .product-card { background:white; border-radius:0.75rem; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.06); overflow:hidden; transition:all 0.3s ease; min-height:400px; }
+    .product-card:hover { box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04); transform:translateY(-5px) scale(1.02);} 
+    .product-image-placeholder { height:320px; display:flex; align-items:center; justify-content:center; background-color:#e5e5e5; transition: background-color 0.3s ease; }
+    .product-image-placeholder:hover { background-color:#d1d5db; }
+    .product-image-placeholder img { max-height:100%; max-width:100%; object-fit:contain; }
+    .product-details { padding:1.5rem; text-align:center; }
+    .product-name { font-size:1.25rem; font-weight:600; margin-bottom:0.25rem; }
+    .product-description { color:#6b7280; margin-bottom:1rem; min-height:40px; }
+    .product-price { font-size:1.5rem; font-weight:700; color:var(--color-accent-gold); margin-bottom:1rem; }
+    .add-to-cart-button { width:100%; padding:0.75rem; background-color:var(--color-primary-dark); color:white; font-weight:600; border:none; border-radius:0.5rem; cursor:pointer; transition: all 0.3s ease; }
+    .add-to-cart-button:hover { background-color:var(--color-accent-gold); transform:scale(1.05); box-shadow:0 4px 8px rgba(0,0,0,0.2); }
+
+    .nav-links .cart-link { font-size: 1.5rem; padding: 0.5rem 0.75rem; }
+    .nav-links .cart-link:hover { color: var(--color-accent-gold); transform: scale(1.05); }
+
+    /* Footer */
+    .footer { background-color:var(--color-primary-dark); margin-top:4rem; padding:2rem 0; text-align:center; }
+    .footer p, .footer a { color:#9ca3af; font-size:0.875rem; }
+    .footer-links { margin-top:1rem; }
+    .footer-links a { margin:0 0.75rem; transition:color 0.3s ease; }
+    .footer-links a:hover { color:var(--color-accent-gold); }
+
+    /* Responsiveness */
+    @media(min-width:640px) { .product-grid { grid-template-columns:repeat(2,1fr); } }
+    @media(min-width:1024px) { .product-grid { grid-template-columns:repeat(3,1fr); } }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container nav-content">
+    <a href="index.html" class="logo">Minimal.</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <div class="dropdown">
+        <a href="ourproducts.html" class="active-link">Our Products</a>
+        <div class="dropdown-content">
+          <a href="#accessories">Accessories</a>
+          <a href="#caps">Caps</a>
+          <a href="#jackets">Jackets</a>
+          <a href="#hoodies">Hoodies</a>
+          <a href="#trousers">Trousers</a>
+          <a href="#pants">Pants</a>
+          <a href="#t-shirts">T-shirts</a>
+          <a href="#shirts">Shirts</a>
+        </div>
+      </div>
+      <a href="aboutus.html">About Us</a>
+       <a href="cart.html" class="cart-link cart-badge" title="Shopping Cart">🛒
+         <span id="cart-count" class="cart-count" style="display:none">0</span>
+       </a>
+      <a href="project2.html" class="logout">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="catalog" class="products-section">
+  <div class="container">
+    <h2 class="section-title">Explore Our Full Collection</h2>
+
+    <!-- Accessories -->
+    <div id="accessories">
+      <h3 class="category-title">Accessories</h3>
+      <div class="product-grid">
+        <!-- ORIGINAL PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="tote.jpg" alt="Tote bag"></div>
+          <div class="product-details">
+            <h3 class="product-name">The Minimal Canvas Tote</h3>
+            <p class="product-description">Perfectly sized for everyday use. Durable, 100% organic cotton.</p>
+            <div class="product-price">$10.00</div>
+            <button class="add-to-cart-button" data-name="The Minimal Canvas Tote" data-price="10.00" data-image="tote.jpg" data-details="Perfectly sized for everyday use.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="waller.jpg" alt="Wallet"></div>
+          <div class="product-details">
+            <h3 class="product-name">Slim Leather Bi-Fold</h3>
+            <p class="product-description">Crafted from Italian grain leather with RFID protection.</p>
+            <div class="product-price">$50.00</div>
+            <button class="add-to-cart-button" data-name="Slim Leather Bi-Fold" data-price="50.00" data-image="waller.jpg" data-details="Crafted from Italian grain leather with RFID protection.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="beanie.jpg" alt="Beanie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Beanie</h3>
+            <p class="product-description">Neutral-toned knit beanie — cozy and timeless.</p>
+            <div class="product-price">$15.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Beanie" data-price="15.00" data-image="beanie.jpg" data-details="Neutral-toned knit beanie — cozy and timeless.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="shades.jpg" alt="Shades"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Shades</h3>
+            <p class="product-description">Minimal design, maximum attitude.</p>
+            <div class="product-price">$25.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Shades" data-price="25.00" data-image="shades.jpg" data-details="Minimal design, maximum attitude.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="watches.jpg" alt="Watch"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Timepiece</h3>
+            <p class="product-description">Clean, refined, and built to complement every look.</p>
+            <div class="product-price">$100.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Timepiece" data-price="100.00" data-image="watches.jpg" data-details="Clean, refined, and built to complement every look.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Caps -->
+    <div id="caps">
+      <h3 class="category-title">Caps</h3>
+      <div class="product-grid">
+        <!-- ORIGINAL PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="cap1.jpg" alt="Cap"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Semi-adjustable cap</h3>
+            <p class="product-description">Simple embroidered logo cap — completes any outfit.</p>
+            <div class="product-price">$10.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Semi-adjustable cap" data-price="10.00" data-image="caps.jpg" data-details="Simple embroidered logo cap — completes any outfit.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="cap3.jpg" alt="Cap"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Open Top Cap </h3>
+            <p class="product-description">Light, breathable, and effortlessly modern.</p>
+            <div class="product-price">$10.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Open Top Cap" data-price="10.00" data-image="cap3.jpg" data-details="Light, breathable, and effortlessly modern.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="cap2.jpg" alt="Cap"></div>
+          <div class="product-details">
+            <h3 class="product-name">NLB x Minimal cap</h3>
+            <p class="product-description">Blends comfort, confidence, and clean design.</p>
+            <div class="product-price">$20.00</div>
+            <button class="add-to-cart-button" data-name="NLB x Minimal cap" data-price="20.00" data-image="cap2.jpg" data-details="Blends comfort, confidence, and clean design.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Jackets -->
+    <div id="jackets">
+      <h3 class="category-title">Jackets</h3>
+      <div class="product-grid">
+        <!-- ORIGINAL PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="varsity.jpg" alt="Varsity Jacket"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Varsity Jacket</h3>
+            <p class="product-description">Premium mix of comfort and confidence.</p>
+            <div class="product-price">$50.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Varsity Jacket" data-price="50.00" data-image="varsity.jpg" data-details="Premium mix of comfort and confidence.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="denim.jpg" alt="Denim Jacket"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Denim Jacket</h3>
+            <p class="product-description">Cropped, structured, and versatile.</p>
+            <div class="product-price">$50.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Denim Jacket" data-price="50.00" data-image="denim.jpg" data-details="Cropped, structured, and versatile.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Hoodies -->
+    <div id="hoodies">
+      <h3 class="category-title">Hoodies</h3>
+      <div class="product-grid">
+        <!-- ORIGINAL PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="zipup.jpg" alt="Zip-up Hoodie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Zip-up Hoodie</h3>
+            <p class="product-description">Soft, warm, and clean-lined design.</p>
+            <div class="product-price">$25.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Zip-up Hoodie" data-price="25.00" data-image="zipup.jpg" data-details="Soft, warm, and clean-lined design.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="hoodie.jpg" alt="Hoodie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Pullover Hoodie</h3>
+            <p class="product-description">Classic style with high-quality cotton.</p>
+            <div class="product-price">$20.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Pullover Hoodie" data-price="20.00" data-image="hoodie.jpg" data-details="Classic style with high-quality cotton.">Add to Cart</button>
+          </div></div>
+        <!-- NEW PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="hoodie2.jpg" alt="Hoodie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Hoodie Oversized</h3>
+            <p class="product-description">Relaxed fit, cozy and stylish.</p>
+            <div class="product-price">$30.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Hoodie Oversized" data-price="30.00" data-image="hoodie2.jpg" data-details="Relaxed fit, cozy and stylish.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="hoodie3.jpg" alt="Hoodie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Hoodie Fleece</h3>
+            <p class="product-description">Soft fleece interior, casual streetwear vibe.</p>
+            <div class="product-price">$28.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Hoodie Fleece" data-price="28.00" data-image="hoodie3.jpg" data-details="Soft fleece interior, casual streetwear vibe.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="hoodie4.jpg" alt="Hoodie"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Hoodie Zip</h3>
+            <p class="product-description">Front zip hoodie, modern minimal design.</p>
+            <div class="product-price">$27.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Hoodie Zip" data-price="27.00" data-image="hoodie4.jpg" data-details="Front zip hoodie, modern minimal design.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Trousers -->
+    <div id="trousers">
+      <h3 class="category-title">Trousers</h3>
+      <div class="product-grid">
+        <!-- NEW PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="trouser2.jpg" alt="Trousers"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Slim Trousers</h3>
+            <p class="product-description">Tailored slim fit, perfect for office or casual.</p>
+            <div class="product-price">$55.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Slim Trousers" data-price="55.00" data-image="trousers2.jpg" data-details="Tailored slim fit, perfect for office or casual.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="trousers3.jpg" alt="Trousers"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Cargo Trousers</h3>
+            <p class="product-description">Functional pockets, relaxed minimalist style.</p>
+            <div class="product-price">$60.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Cargo Trousers" data-price="60.00" data-image="trousers3.jpg" data-details="Functional pockets, relaxed minimalist style.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="trousers4.jpg" alt="Trousers"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Chino Trousers</h3>
+            <p class="product-description">Soft cotton, versatile minimalist design.</p>
+            <div class="product-price">$52.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Chino Trousers" data-price="52.00" data-image="trousers4.jpg" data-details="Soft cotton, versatile minimalist design.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Pants -->
+    <div id="pants">
+      <h3 class="category-title">Pants</h3>
+      <div class="product-grid">
+        <!-- NEW PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="pants2.jpg" alt="Pants"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Jogger Pants</h3>
+            <p class="product-description">Tapered joggers, comfortable and sleek.</p>
+            <div class="product-price">$30.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Jogger Pants" data-price="30.00" data-image="pants2.jpg" data-details="Tapered joggers, comfortable and sleek.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="pants3.jpg" alt="Pants"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Slim Pants</h3>
+            <p class="product-description">Modern slim cut, minimalist aesthetic.</p>
+            <div class="product-price">$35.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Slim Pants" data-price="35.00" data-image="pants3.jpg" data-details="Modern slim cut, minimalist aesthetic.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="pants4.jpg" alt="Pants"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Relaxed Pants</h3>
+            <p class="product-description">Soft cotton, loose comfortable fit.</p>
+            <div class="product-price">$28.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Relaxed Pants" data-price="28.00" data-image="pants4.jpg" data-details="Soft cotton, loose comfortable fit.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- T-shirts -->
+    <div id="t-shirts">
+      <h3 class="category-title">T-shirts</h3>
+      <div class="product-grid">
+        <!-- ORIGINAL PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="tshirt.jpg" alt="T-shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Crew Neck T-shirt</h3>
+            <p class="product-description">Soft cotton, neutral colors.</p>
+            <div class="product-price">$12.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Crew Neck T-shirt" data-price="12.00" data-image="tshirt.jpg" data-details="Soft cotton, neutral colors.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="tshirt2.jpg" alt="T-shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal V-neck T-shirt</h3>
+            <p class="product-description">Lightweight, soft fit.</p>
+            <div class="product-price">$12.00</div>
+            <button class="add-to-cart-button" data-name="Minimal V-neck T-shirt" data-price="12.00" data-image="tshirt2.jpg" data-details="Lightweight, soft fit.">Add to Cart</button>
+          </div></div>
+        <!-- NEW PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="tshirt3.jpg" alt="T-shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Graphic Tee</h3>
+            <p class="product-description">Soft cotton with subtle minimalist graphic.</p>
+            <div class="product-price">$12.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Graphic Tee" data-price="12.00" data-image="tshirt3.jpg" data-details="Soft cotton with subtle minimalist graphic.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="tshirt4.jpg" alt="T-shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Pocket Tee</h3>
+            <p class="product-description">Classic fit, small chest pocket detail.</p>
+            <div class="product-price">$11.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Pocket Tee" data-price="11.00" data-image="tshirt4.jpg" data-details="Classic fit, small chest pocket detail.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="tshirt5.jpg" alt="T-shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Stripe Tee</h3>
+            <p class="product-description">Soft, breathable cotton with subtle stripes.</p>
+            <div class="product-price">$13.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Stripe Tee" data-price="13.00" data-image="tshirt5.jpg" data-details="Soft, breathable cotton with subtle stripes.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+    <!-- Shirts -->
+    <div id="shirts">
+      <h3 class="category-title">Shirts</h3>
+      <div class="product-grid">
+        <!-- NEW PRODUCTS -->
+        <div class="product-card"><div class="product-image-placeholder"><img src="shirt3.jpg" alt="Shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Linen Shirt</h3>
+            <p class="product-description">Lightweight linen, perfect for summer.</p>
+            <div class="product-price">$30.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Linen Shirt" data-price="30.00" data-image="shirt3.jpg" data-details="Lightweight linen, perfect for summer.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="shirt4.jpg" alt="Shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Oxford Shirt</h3>
+            <p class="product-description">Classic Oxford cloth, structured fit.</p>
+            <div class="product-price">$35.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Oxford Shirt" data-price="35.00" data-image="shirt4.jpg" data-details="Classic Oxford cloth, structured fit.">Add to Cart</button>
+          </div></div>
+        <div class="product-card"><div class="product-image-placeholder"><img src="shirt5.jpg" alt="Shirt"></div>
+          <div class="product-details">
+            <h3 class="product-name">Minimal Striped Shirt</h3>
+            <p class="product-description">Soft cotton with elegant stripes.</p>
+            <div class="product-price">$32.00</div>
+            <button class="add-to-cart-button" data-name="Minimal Striped Shirt" data-price="32.00" data-image="shirt5.jpg" data-details="Soft cotton with elegant stripes.">Add to Cart</button>
+          </div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <p>&copy; 2025 Minimal Shop. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="ourproducts.html">Products</a>
+    <a href="aboutus.html">About Us</a>
+  </div>
+</footer>
+
+<script>
+  // CART KEY matches cart.html (so they share storage)
+  const CART_KEY = 'cart';
+
+  // Utility: get cart (array of items with {id,name,price,image,details,quantity})
+  function loadCart(){
+    try{
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    }catch(e){
+      return [];
+    }
+  }
+  function saveCart(cart){
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  }
+
+  // Update cart-count badge (sum of quantities)
+  function updateCartCount(){
+    const cart = loadCart();
+    const count = cart.reduce((s,i)=> s + (i.quantity || 0), 0);
+    const el = document.getElementById('cart-count');
+    if(count > 0){ el.style.display = 'inline-block'; el.textContent = count; }
+    else { el.style.display = 'none'; }
+  }
+
+  // Add to cart buttons
+  document.querySelectorAll('.add-to-cart-button').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      const item = {
+        id: btn.dataset.id || btn.dataset.name, // use name as id if none
+        name: btn.dataset.name,
+        price: parseFloat(btn.dataset.price) || 0,
+        image: btn.dataset.image || '',
+        details: btn.dataset.details || '',
+        quantity: 1
+      };
+
+      let cart = loadCart();
+      // if item exists (by id or name), increment quantity
+      const existing = cart.find(c => c.id === item.id || c.name === item.name);
+      if(existing){
+        existing.quantity = (existing.quantity || 0) + 1;
+      } else {
+        cart.push(item);
+      }
+      saveCart(cart);
+      updateCartCount();
+
+      // small non-blocking feedback (no alert)
+      btn.textContent = 'Added ✓';
+      btn.disabled = true;
+      setTimeout(()=>{ btn.textContent = 'Add to Cart'; btn.disabled = false; }, 900);
+    });
+  });
+
+  // initialize badge on load
+  updateCartCount();
+</script>
+
+</body>
+</html>

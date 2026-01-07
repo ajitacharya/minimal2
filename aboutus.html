@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | Minimal</title>
+
+  <!-- Font Import -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <style>
+    :root {
+      --color-primary-dark: #1c1917;
+      --color-secondary-light: #f5f5f4;
+      --color-accent-gold: #ca8a04;
+      --max-width: 1200px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: var(--color-primary-dark);
+      line-height: 1.7;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.875rem;
+      font-weight: 900;
+      color: var(--color-primary-dark);
+      letter-spacing: -0.025em;
+    }
+
+    .logo:hover {
+      color: var(--color-accent-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 1.125rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+    }
+
+    .nav-links a:hover {
+      color: var(--color-accent-gold);
+      background-color: var(--color-secondary-light);
+    }
+
+    .active-link {
+      color: var(--color-accent-gold);
+      background-color: var(--color-secondary-light);
+      pointer-events: none;
+    }
+
+    /* Dropdown */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 180px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 16px;
+      color: var(--color-primary-dark);
+      font-size: 1rem;
+    }
+
+    .dropdown-content a:hover {
+      background-color: var(--color-secondary-light);
+      color: var(--color-accent-gold);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    /* Main Section */
+    main {
+      padding-top: 4rem;
+      padding-bottom: 6rem;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.25rem;
+    }
+    .nav-links .cart-link { 
+            font-size: 1.5rem; 
+            padding: 0.5rem 0.75rem;
+        }
+    .nav-links .cart-link.active-link { 
+            background: none; /* Do not show background on active cart icon */
+            transform: none; 
+            color: var(--color-primary-dark); 
+            pointer-events: auto; /* Allow interaction */
+        }
+   .nav-links .cart-link:hover { 
+            color: var(--color-accent-gold); 
+            background: none; 
+            transform: scale(1.1); 
+        }
+    
+    .class1 {
+      font-size: 1.2rem;
+      text-align: center; 
+      color: var(--color-primary-dark);
+    }
+
+    /* Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-accent-gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .card hr {
+      width: 70px;
+      height: 3px;
+      background-color: var(--color-primary-dark);
+      border: none;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+    }
+
+    .card p {
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--color-primary-dark);
+      color: #9ca3af;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 4rem;
+    }
+
+    footer p {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .card {
+        padding: 1.5rem;
+      }
+      .dropdown-content {
+        position: relative;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-content">
+      <a href="index.html" class="logo">Minimal.</a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+
+        <div class="dropdown">
+          <a href="ourproducts.html">Our Products</a>
+          <div class="dropdown-content">
+            <a href="#hoodies">Hoodies</a>
+            <a href="#pants">Pants</a>
+            <a href="#tshirts">T-Shirts</a>
+            <a href="#jackets">Jackets</a>
+            <a href="#caps">Caps</a>
+          </div>
+        </div>
+          
+        <a href="aboutus.html" class="active-link">About Us</a>
+        <a href="cart.html" class="cart-link active-link" title="Shopping Cart">🛒</a>
+        <a href="project1.html" class="logout">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- About Content -->
+  <main>
+    <div class="container">
+      <h1>About Us</h1>
+      <p class="class1"><b>Minimal</b> isn’t just another brand — it’s a lifestyle built around balance, simplicity, and self-expression.</p>
+      <br><br><br>
+      <div class="grid">
+        <section class="card">
+          <h2>About Minimal</h2>
+          <hr />
+          <p>At Minimal, we believe fashion doesn’t need to shout to make a statement. Our designs are built on simplicity — clean lines, calm tones, and timeless silhouettes that bring confidence without excess. We focus on creating clothing that feels effortless, looks refined, and lasts beyond seasons.</p>
+        </section>
+
+        <section class="card">
+          <h2>Our Goals</h2>
+          <hr />
+          <p>Our goal is to redefine simplicity in fashion by creating timeless, sustainable designs that inspire confidence. We aim to build a community that values authenticity, quality, and purpose — showing that minimalism isn’t about having less, but about choosing better.</p>
+        </section>
+
+        <section class="card">
+          <h2>Our Mission & Vision</h2>
+          <hr />
+          <p>Unlike many brands that chase trends, Minimal stands for timeless modernity. We don’t overload our designs — we refine them. Every piece is crafted with purpose: versatile enough for everyday wear, yet stylish enough to make a subtle statement.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© <span id="year"></span> Copyright with Minimal.Co</p>
+    <div class="footer-links">
+        <a href="Tm.html">Terms of service |
+    </a>
+    <a href="pol-ser.html">Privacy Policy </a>
+    </div>
+    <p>Gmail: support.minimal@gmail.com<br>
+      Phone: 9767484598
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
